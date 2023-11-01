@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { FlatList, StyleSheet, Text, View, Button, Modal } from "react-native";
+import { Button, FlatList, Modal, StyleSheet, Text, View } from "react-native";
+import { Input, Rating } from "react-native-elements";
 import { useSelector, useDispatch } from "react-redux";
 import RenderCampsite from "../features/campsites/RenderCampsite";
 import { toggleFavorite } from "../features/favorites/favoritesSlice";
-import { Input, Rating } from "react-native-elements";
 import { postComment } from "../features/comments/commentsSlice";
+import * as Animatable from "react-native-animatable";
 
 const CampsiteInfoScreen = ({ route }) => {
   const { campsite } = route.params;
   const comments = useSelector((state) => state.comments);
   const favorites = useSelector((state) => state.favorites);
-  const dispatch = useDispatch();
+  const [showModal, setShowModal] = useState(false);
   const [rating, setRating] = useState(5);
   const [author, setAuthor] = useState("");
   const [text, setText] = useState("");
-
-  const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
 
   const handleSubmit = () => {
     const newComment = {
@@ -26,7 +26,6 @@ const CampsiteInfoScreen = ({ route }) => {
     };
     dispatch(postComment(newComment));
     setShowModal(!showModal);
-    resetForm();
   };
 
   const resetForm = () => {
@@ -42,8 +41,8 @@ const CampsiteInfoScreen = ({ route }) => {
         <Rating
           startingValue={item.rating}
           imageSize={10}
-          style={{ alignItems: "flex-start", paddingVertical: "5%" }}
           readonly
+          style={{ alignItems: "flex-start", paddingVertical: "5%" }}
         />
         <Text style={{ fontSize: 12 }}>
           {`-- ${item.author}, ${item.date}`}
@@ -53,7 +52,7 @@ const CampsiteInfoScreen = ({ route }) => {
   };
 
   return (
-    <>
+    <Animatable.View animation="fadeInUp" duration={2000} delay={1000}>
       <FlatList
         data={comments.commentsArray.filter(
           (comment) => comment.campsiteId === campsite.id
@@ -77,7 +76,7 @@ const CampsiteInfoScreen = ({ route }) => {
         }
       />
       <Modal
-        animationType={"slide"}
+        animationType="slide"
         transparent={false}
         visible={showModal}
         onRequestClose={() => setShowModal(!showModal)}
@@ -106,12 +105,12 @@ const CampsiteInfoScreen = ({ route }) => {
           />
           <View style={{ margin: 10 }}>
             <Button
-              title="Submit"
-              color="#5637DD"
               onPress={() => {
                 handleSubmit();
                 resetForm();
               }}
+              color="#5637DD"
+              title="Submit"
             />
           </View>
           <View style={{ margin: 10 }}>
@@ -126,7 +125,7 @@ const CampsiteInfoScreen = ({ route }) => {
           </View>
         </View>
       </Modal>
-    </>
+    </Animatable.View>
   );
 };
 
